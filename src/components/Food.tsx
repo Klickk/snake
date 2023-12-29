@@ -1,6 +1,7 @@
 import React from "react";
 import { Coordinate } from "../types/types";
 import { StyleSheet, View } from "react-native";
+import { ColorScheme } from "../styles/ColorScheme";
 
 interface FoodProps {
   food: Coordinate;
@@ -11,7 +12,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 7,
-    backgroundColor: "red",
+    backgroundColor: ColorScheme.food,
     position: "absolute",
   },
 });

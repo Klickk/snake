@@ -2,10 +2,11 @@ import { Coordinate } from "../types/types";
 
 type checkGameOver = (
   Game_Boundaries: { xMin: number; xMax: number; yMin: number; yMax: number },
-  snake: Coordinate[]
+  snake: Coordinate[],
+  walls?: Coordinate[]
 ) => boolean;
 
-const checkGameOver: checkGameOver = (Game_Boundaries, snake) => {
+const checkGameOver: checkGameOver = (Game_Boundaries, snake, walls) => {
   const head = snake[0];
   if (
     head.x < Game_Boundaries.xMin ||
@@ -18,6 +19,13 @@ const checkGameOver: checkGameOver = (Game_Boundaries, snake) => {
   for (let i = 1; i < snake.length; i++) {
     if (snake[i].x === head.x && snake[i].y === head.y) {
       return true;
+    }
+  }
+  if (walls) {
+    for (let i = 0; i < walls.length; i++) {
+      if (walls[i].x === head.x && walls[i].y === head.y) {
+        return true;
+      }
     }
   }
   return false;

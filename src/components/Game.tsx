@@ -6,13 +6,15 @@ import {
   PanGestureHandler,
   PanGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
-import { Coordinate, Direction } from "../types/types";
+import { Coordinate, Direction, GameMode } from "../types/types";
 import randomCoordinateGenerator from "../utils/randomCoordinateGenerator";
 import Snake from "./Snake";
 import checkGameOver from "../utils/checkGameOver";
 import Food from "./Food";
 import checkEatsFood from "../utils/checkEatsFood";
 import Header from "./Header";
+import wallGen from "../utils/wallGen";
+import Wall from "./Wall";
 
 const styles = StyleSheet.create({
   container: {
@@ -29,11 +31,15 @@ const styles = StyleSheet.create({
   },
 });
 
+interface GameProps {
+  GameMode: GameMode;
+  setGameMode: (GameMode: GameMode) => void;
+}
+
 const Game_Bounds = { xMin: 0, xMax: 39, yMin: 0, yMax: 73 };
-const Move_Interval = 50;
 const Score_Increment = 1;
 
-const Game = () => {
+const Game: React.FC<GameProps> = ({ GameMode, setGameMode }) => {
   const [direction, setDirection] = React.useState<Direction>(Direction.None);
   const [snake, setSnake] = React.useState<Coordinate[]>([{ x: 0, y: 0 }]);
   const [food, setFood] = React.useState<Coordinate>({ x: 0, y: 0 });
@@ -41,14 +47,23 @@ const Game = () => {
   const [isPaused, setIsPaused] = React.useState<boolean>(false);
   const [score, setScore] = React.useState<number>(0);
   const [reloader, setReloader] = React.useState<boolean>(false);
+  const [Move_Interval, setMove_Interval] = React.useState<number>(90);
+  const [walls, setWalls] = React.useState<Coordinate[]>([]);
 
   React.useEffect(() => {
-    setSnake([randomCoordinateGenerator(Game_Bounds)]);
-    setFood(randomCoordinateGenerator(Game_Bounds, snake));
+    setSnake([randomCoordinateGenerator(Game_Bounds, walls)]);
+    setFood(randomCoordinateGenerator(Game_Bounds, [...snake, ...walls]));
     setIsGameOver(false);
     setScore(0);
     setDirection(Direction.None);
     setIsPaused(false);
+    if (GameMode === 1) setMove_Interval(90);
+    else if (GameMode === 2) setMove_Interval(50);
+    else if (GameMode === 3) {
+      setMove_Interval(65);
+      setWalls(wallGen(Game_Bounds));
+    }
+    console.log(GameMode);
   }, [reloader]);
 
   React.useEffect(() => {
@@ -91,7 +106,13 @@ const Game = () => {
         break;
     }
 
-    if (checkGameOver(Game_Bounds, [newHead, ...snake.slice(0, -1)])) {
+    if (
+      checkGameOver(
+        Game_Bounds,
+        [newHead, ...snake.slice(0, -1)],
+        walls ? walls : undefined
+      )
+    ) {
       setIsGameOver((prev) => !prev);
       return;
     }
@@ -136,10 +157,12 @@ const Game = () => {
           pauseGame={pauseGame}
           reloadGame={reloadGame}
           isGameOver={isGameOver}
+          setGameMode={setGameMode}
         >
           <Text>{score}</Text>
         </Header>
         <View style={styles.boundaries}>
+          <Wall wall={walls} />
           <Snake snake={snake} />
           <Food food={food} />
         </View>

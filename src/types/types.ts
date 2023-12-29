@@ -10,3 +10,10 @@ export enum Direction {
   Right,
   None,
 }
+
+export enum GameMode {
+  None,
+  Normal,
+  Hard,
+  PowerUps,
+}

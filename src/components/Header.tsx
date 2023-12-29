@@ -1,7 +1,9 @@
-import { Pause, Play, RotateCcw } from "lucide-react-native";
+import { LogOut, Pause, Play, RotateCcw } from "lucide-react-native";
 import { StyleSheet, View, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { ColorScheme } from "../styles/ColorScheme";
+import { GameMode } from "../types/types";
+import { Fragment } from "react";
 
 interface HeaderProps {
   reloadGame: () => void;
@@ -9,6 +11,7 @@ interface HeaderProps {
   children: JSX.Element;
   isPaused: boolean;
   isGameOver: boolean;
+  setGameMode: (GameMode: GameMode) => void;
 }
 
 const styles = StyleSheet.create({
@@ -24,7 +27,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     padding: 15,
     backgroundColor: ColorScheme.background,
-    color: ColorScheme.primary,
   },
 });
 
@@ -34,20 +36,30 @@ const Header: React.FC<HeaderProps> = ({
   children,
   isPaused,
   isGameOver,
+  setGameMode,
 }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={reloadGame}>
-        <RotateCcw />
+        <RotateCcw color={ColorScheme.primary} />
       </TouchableOpacity>
       {isGameOver ? (
-        <Text>Game Over</Text>
+        <Fragment>
+          <Text style={{ color: ColorScheme.food }}>Game Over</Text>
+        </Fragment>
       ) : (
         <TouchableOpacity onPress={pauseGame}>
-          {isPaused ? <Play /> : <Pause />}
+          {isPaused ? (
+            <Play color={ColorScheme.primary} />
+          ) : (
+            <Pause color={ColorScheme.primary} />
+          )}
         </TouchableOpacity>
       )}
       {children}
+      <TouchableOpacity onPress={() => setGameMode(GameMode.None)}>
+        <LogOut color={ColorScheme.primary} />
+      </TouchableOpacity>
     </View>
   );
 };

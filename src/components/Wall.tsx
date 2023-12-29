@@ -3,32 +3,31 @@ import { Coordinate } from "../types/types";
 import { StyleSheet, View } from "react-native";
 import { ColorScheme } from "../styles/ColorScheme";
 
-interface SnakeProps {
-  snake: Coordinate[];
+interface WallProps {
+  wall: Coordinate[];
 }
 
 const styles = StyleSheet.create({
-  snake: {
+  wall: {
     width: 10,
     height: 10,
-    borderRadius: 7,
-    backgroundColor: ColorScheme.primary,
+    backgroundColor: ColorScheme.wall,
     position: "absolute",
   },
 });
 
-const Snake: React.FC<SnakeProps> = ({ snake }) => {
+const Wall: React.FC<WallProps> = ({ wall }) => {
   return (
     <Fragment>
-      {snake.map((segment: Coordinate, index: number) => {
+      {wall.map((segment: Coordinate, index: number) => {
         const segmentStyle = {
           left: segment.x * 10,
           top: segment.y * 10,
         };
-        return <View key={index} style={[styles.snake, segmentStyle]} />;
+        return <View key={index} style={[styles.wall, segmentStyle]} />;
       })}
     </Fragment>
   );
 };
 
-export default Snake;
+export default Wall;
